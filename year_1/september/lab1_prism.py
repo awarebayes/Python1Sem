@@ -6,22 +6,19 @@
 import math as m
 
 
-def main():
-    print("Volume / Side Area of an Inscribed Prism")
+print("Volume / Side Area of an Inscribed Prism")
 
-    r = float(input(">>> radius (float): "))  # радиус
-    h = float(input(">>> height (float): "))  # высота
+r = float(input(">>> radius (float): "))  # радиус
+h = float(input(">>> height (float): "))  # высота
 
-    if r < 0 or h < 0:
-        print("radius and height should be positive!")
-        exit(1)
-
+# радиус и высота не отрицательны
+if r > 0 or h > 0:
     base_side = 2 * r * m.sin(m.radians(36))  # сторона основания
     base_area = 0.5 * r * r * 5 * m.sin(m.radians(72))  # площадь основания
+    side_area = base_area * h  # площадь боковая
+    volume = 5 * base_side * h  # объем
 
-    print("Prism side area: {:g}".format(base_area * h), "(units squared)")
-    print("Prism volume: {:g}".format(5 * base_side * h), "(units cubed)")
-
-
-if __name__ == "__main__":
-    main()
+    print("Prism side area: {:g}".format(side_area), "(units squared)")
+    print("Prism volume: {:g}".format(volume), "(units cubed)")
+else:
+    print("radius and height should be positive")
