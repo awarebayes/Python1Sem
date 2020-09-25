@@ -69,7 +69,7 @@ sides_adjacent = {
 
 # side lengths:
 for i, side in enumerate(sides):
-    print(f"Side {i+1} length: {v_len(side):g}")
+    print("Side {} length: {:g}".format(i+1, v_len(side)))
 
 # angles between sides
 angle_opposite = {}  # angle opposite to side
@@ -138,7 +138,6 @@ for vertex in vertices:
 
 if (angle_sum - 2 * pi) < 10e-5:  # floating point bug
     print("Point is inside the triangle")
-    print(f"Distance from point to nearest triangle side: {min_side_dist:g}")
-    print(f"\n p.s: point is: {p}, side is {min_side}")
+    print("Distance from point to nearest triangle side: {:g}".format(min_side_dist))
 else:
     print("Point is not inside the triangle")
