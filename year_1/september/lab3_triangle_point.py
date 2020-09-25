@@ -34,19 +34,21 @@ sides_adjacent = {
 }  # sides adjacent to a vertex
 
 # side lengths:
-vec_len = {}  # vector (turple): length (float)
 side_len = set()  # set of side lens
-for side in sides:
-    vec_len[side] = (side[0] ** 2 + side[1] ** 2) ** 0.5
-    side_len.add(vec_len[side])
-    print(f"Side {side[2]} length: {vec_len[side]:g}")
+for i, side in enumerate(sides):
+    length = (side[0] ** 2 + side[1] ** 2) ** 0.5
+    side_len.add(length)
+    print(f"Side {i+1} length: {length:g}")
 
 # angles between sides
 angle_opposite = {}  # angle opposite to side
-angle = {}  # angle between two vectors
 ang_sum = 0  # for debugging
 for side in sides:
-    side1, side2 = sides_opposite[side]
+
+    # function triangle angle
+    # begin function
+    side1, side2 = sides_opposite[side]  # arguments
+    ang = 0  # result
     points1 = set(side1[2])
     points2 = set(side2[2])
     # find intersection point
@@ -56,17 +58,18 @@ for side in sides:
     center = center.pop()  # is the same as [] but for set
     vec1 = (start[0] - center[0], start[1] - center[1])
     vec2 = (end[0] - center[0], end[1] - center[1])
-    ang = angle[(vec2, vec1)] = acos(
+    ang = acos(
         (vec1[0] * vec2[0] + vec1[1] * vec2[1])
         / (
             ((vec1[0] ** 2) + vec1[1] ** 2) ** 0.5
             * ((vec2[0] ** 2) + vec2[1] ** 2) ** 0.5
         )
     )
+    # end function
+
     ang_sum += ang
     # return v_ang(v_new(center, start), v_new(center, end))
     angle_opposite[side] = ang
-    angle[(side1, side2)] = angle[(side2, side1)] = ang
 
 assert ang_sum - pi < 10e-5  # sum of triangles angles is 180 deg = pi
 
@@ -81,7 +84,30 @@ for side in sides:
         altitude_to = side
         altitude_from = sides_opposite[side]
 
-altitude = vec_len[altitude_from[0]] * sin(angle[(altitude_from[0], altitude_to)])
+# function vector length
+# function begin
+vec = altitude_from[0]  # agruments
+altitude_from_len = ((vec[0] ** 2) + vec[1] ** 2) ** 0.5  # result
+# end function
+
+
+# function angle:
+# begin function
+vec1, vec2 = altitude_from[0], altitude_to  # arguments
+ang = 0  # return
+if (vec1[0] ** 2 + vec1[1] ** 2) ** 0.5 > 0 and (
+        vec2[0] ** 2 + vec2[1] ** 2
+) ** 0.5 > 0:
+    ang = acos(
+        (vec1[0] * vec2[0] + vec1[1] * vec2[1])
+        / (
+                ((vec1[0] ** 2) + vec1[1] ** 2) ** 0.5
+                * ((vec2[0] ** 2) + vec2[1] ** 2) ** 0.5
+        )
+    )
+# end function
+
+altitude = altitude_from_len * sin(ang)
 # also works:
 # altitude = vec_len[altitude_from[1]] * sin(angle[(altitude_from[1], altitude_to)])
 print("Altitude (length) from largest angle: {:g}".format(altitude))
@@ -109,27 +135,31 @@ point_vertex = {}  # dict vertex: vector from vertex to point
 for i, v in enumerate(vertices):
     point_vertex[v] = ((px - v[0]), (py - v[1]), "pv" + str(i))
 
-# lengths of vertex-point vectors
-for v in vertices:
-    vec_len[point_vertex[v]] = (
-        point_vertex[v][0] ** 2 + point_vertex[v][1] ** 2
-    ) ** 0.5
 
 # angles between vertex-point vectors
 for vertex1, vertex2 in ((v1, v2), (v2, v3), (v1, v3)):
     vec1, vec2 = point_vertex[vertex1], point_vertex[vertex2]
     # point is a vertex, hence distance to vertex is 0
-    if vec_len[vec1] == 0 or vec_len[vec2] == 0:
+    if (vec1[0] ** 2 + vec1[1] ** 2) ** 0.5 == 0 or ((vec2[0] ** 2) + vec2[1] ** 2) ** 0.5 == 0:
         angle_sum = 2 * pi
         break
-    angle[(vec1, vec2)] = angle[(vec2, vec1)] = acos(
-        (vec1[0] * vec2[0] + vec1[1] * vec2[1])
-        / (
-            ((vec1[0] ** 2) + vec1[1] ** 2) ** 0.5
-            * ((vec2[0] ** 2) + vec2[1] ** 2) ** 0.5
+
+    # function angle:
+    # vec1, vec2 = vec1, vec2  # arguments
+    ang = 0  # return
+    if (vec1[0] ** 2 + vec1[1] ** 2) ** 0.5 > 0 and (
+            vec2[0] ** 2 + vec2[1] ** 2
+    ) ** 0.5 > 0:
+        ang = acos(
+            (vec1[0] * vec2[0] + vec1[1] * vec2[1])
+            / (
+                    ((vec1[0] ** 2) + vec1[1] ** 2) ** 0.5
+                    * ((vec2[0] ** 2) + vec2[1] ** 2) ** 0.5
+            )
         )
-    )
-    angle_sum += angle[(vec1, vec2)]
+    # end function
+
+    angle_sum += ang
 
 # distance from point to nearest side
 min_side_dist = inf
@@ -139,8 +169,10 @@ for vertex in vertices:
     vec = point_vertex[vertex]
     for side in sides_adjacent[vertex]:
         # calculate angle between vector and side (if haven't already)
-        ang = 0
-        vec1, vec2 = side, vec
+
+        # function angle:
+        vec1, vec2 = side, vec  # arguments
+        ang = 0  # return
         if (vec1[0] ** 2 + vec1[1] ** 2) ** 0.5 > 0 and (
             vec2[0] ** 2 + vec2[1] ** 2
         ) ** 0.5 > 0:
@@ -151,6 +183,8 @@ for vertex in vertices:
                     * ((vec2[0] ** 2) + vec2[1] ** 2) ** 0.5
                 )
             )
+        # end function
+
         angle_sum2 += degrees(ang)
 
         side_dist = (vec[0] ** 2 + vec[1] ** 2) ** 0.5 * sin(ang)
@@ -164,4 +198,4 @@ if (angle_sum - 2 * pi) < 10e-5:  # floating point bug
 else:
     print("Point is not inside the triangle")
 
-print(angle_sum2)
+# print(angle_sum2)
