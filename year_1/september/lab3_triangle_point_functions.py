@@ -13,10 +13,6 @@ def v_new(point1, point2):
     return (point1[0] - point2[0], point1[1] - point2[1], (point1, point2))
 
 
-def v_plus(vector1, vector2):
-    return (vector1[0] + vector2[0], vector1[1] + vector2[1])
-
-
 def v_dot(vector1, vector2):
     return vector1[0] * vector2[0] + vector1[1] * vector2[1]
 
@@ -33,6 +29,8 @@ def v_ang(vector1, vector2):
     return ang
 
 
+# angle between two vectors
+# vectors must have a common point
 def triangle_angle(side1, side2):
     points1 = set(side1[2])
     points2 = set(side2[2])
@@ -54,8 +52,8 @@ vertices = (v1, v2, v3)
 s1 = v_new(v1, v2)
 s2 = v_new(v3, v1)
 s3 = v_new(v2, v3)
-assert v_plus(s1, v_plus(s2, s3)) == (0, 0)
 sides = (s1, s2, s3)
+
 sides_opposite = {
     s1: (s2, s3),
     s2: (s3, s1),
@@ -69,7 +67,7 @@ sides_adjacent = {
 
 # side lengths:
 for i, side in enumerate(sides):
-    print("Side {} length: {:g}".format(i+1, v_len(side)))
+    print("Side {} length: {:g}".format(i + 1, v_len(side)))
 
 # angles between sides
 angle_opposite = {}  # angle opposite to side
