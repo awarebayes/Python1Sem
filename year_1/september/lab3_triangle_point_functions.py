@@ -87,6 +87,9 @@ for side in sides:
         altitude_from = sides_opposite[side]
 
 altitude = v_len(altitude_from[0]) * sin(triangle_angle(altitude_from[0], altitude_to))
+if abs(altitude * v_len(altitude_to) - 0) < 10e-5:
+    print("NOT A TRIANGLE, OOPS!")
+    exit(1)
 print("Altitude (length) from largest angle: {:g}".format(altitude))
 
 # Check whether isosceles

@@ -96,13 +96,13 @@ altitude_from_len = ((vec[0] ** 2) + vec[1] ** 2) ** 0.5  # result
 vec1, vec2 = altitude_from[0], altitude_to  # arguments
 ang = 0  # return
 if (vec1[0] ** 2 + vec1[1] ** 2) ** 0.5 > 0 and (
-        vec2[0] ** 2 + vec2[1] ** 2
+    vec2[0] ** 2 + vec2[1] ** 2
 ) ** 0.5 > 0:
     ang = acos(
         (vec1[0] * vec2[0] + vec1[1] * vec2[1])
         / (
-                ((vec1[0] ** 2) + vec1[1] ** 2) ** 0.5
-                * ((vec2[0] ** 2) + vec2[1] ** 2) ** 0.5
+            ((vec1[0] ** 2) + vec1[1] ** 2) ** 0.5
+            * ((vec2[0] ** 2) + vec2[1] ** 2) ** 0.5
         )
     )
 # end function
@@ -140,7 +140,9 @@ for i, v in enumerate(vertices):
 for vertex1, vertex2 in ((v1, v2), (v2, v3), (v1, v3)):
     vec1, vec2 = point_vertex[vertex1], point_vertex[vertex2]
     # point is a vertex, hence distance to vertex is 0
-    if (vec1[0] ** 2 + vec1[1] ** 2) ** 0.5 == 0 or ((vec2[0] ** 2) + vec2[1] ** 2) ** 0.5 == 0:
+    if (vec1[0] ** 2 + vec1[1] ** 2) ** 0.5 == 0 or (
+        (vec2[0] ** 2) + vec2[1] ** 2
+    ) ** 0.5 == 0:
         angle_sum = 2 * pi
         break
 
@@ -148,13 +150,13 @@ for vertex1, vertex2 in ((v1, v2), (v2, v3), (v1, v3)):
     # vec1, vec2 = vec1, vec2  # arguments
     ang = 0  # return
     if (vec1[0] ** 2 + vec1[1] ** 2) ** 0.5 > 0 and (
-            vec2[0] ** 2 + vec2[1] ** 2
+        vec2[0] ** 2 + vec2[1] ** 2
     ) ** 0.5 > 0:
         ang = acos(
             (vec1[0] * vec2[0] + vec1[1] * vec2[1])
             / (
-                    ((vec1[0] ** 2) + vec1[1] ** 2) ** 0.5
-                    * ((vec2[0] ** 2) + vec2[1] ** 2) ** 0.5
+                ((vec1[0] ** 2) + vec1[1] ** 2) ** 0.5
+                * ((vec2[0] ** 2) + vec2[1] ** 2) ** 0.5
             )
         )
     # end function

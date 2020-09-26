@@ -65,7 +65,7 @@ for side in sides:
     # angle between two vectors
     # vectors must have a common point
     # begin function triangle angle
-    side1, side2 = vec1, vec2 # args
+    side1, side2 = vec1, vec2  # args
     points1 = set(side1[2])
     points2 = set(side2[2])
     center = points1.intersection(points2)
@@ -73,20 +73,22 @@ for side in sides:
     center = center.pop()
 
     # begin function v_new
-    point1, point2 = center, start # args
+    point1, point2 = center, start  # args
     res = (point1[0] - point2[0], point1[1] - point2[1], (point1, point2))
     # end function
     vec1 = res
 
     # begin function v_new
-    point1, point2 = center, end # args
+    point1, point2 = center, end  # args
     res = (point1[0] - point2[0], point1[1] - point2[1], (point1, point2))
     # end function
     vec2 = res
 
     # begin fucntion v_ang(vector1, vector2):
     vector1, vector2 = vec1, vec2
-    len1, len2 = (vector1[0] ** 2 + vector1[1] ** 2) ** 0.5, (vector2[0] ** 2 + vector2[1] ** 2) ** 0.5
+    len1, len2 = (vector1[0] ** 2 + vector1[1] ** 2) ** 0.5, (
+        vector2[0] ** 2 + vector2[1] ** 2
+    ) ** 0.5
     res = 0
     if len1 != 0 and len2 != 0:
         res = acos((vector1[0] * vector2[0] + vector1[1] * vector2[1]) / (len1 * len2))
@@ -107,14 +109,16 @@ for side in sides:
 
 # begin function v_len(vector):
 vector = altitude_from[0]
-res = (vector[0]**2 + vector[1] ** 2) ** 0.5
+res = (vector[0] ** 2 + vector[1] ** 2) ** 0.5
 # end function
 from_length = res
 
 
 # begin fucntion v_ang(vector1, vector2):
 vector1, vector2 = altitude_from[0], altitude_to
-len1, len2 = (vector1[0]**2 + vector1[1] ** 2) ** 0.5,  (vector2[0]**2 + vector2[1] ** 2) ** 0.5
+len1, len2 = (vector1[0] ** 2 + vector1[1] ** 2) ** 0.5, (
+    vector2[0] ** 2 + vector2[1] ** 2
+) ** 0.5
 res = 0
 if len1 != 0 and len2 != 0:
     res = acos((vector1[0] * vector2[0] + vector1[1] * vector2[1]) / (len1 * len2))
@@ -152,14 +156,18 @@ for i, v in enumerate(vertices):
 for vertex1, vertex2 in ((v1, v2), (v2, v3), (v1, v3)):
     vec1, vec2 = point_vertex[vertex1], point_vertex[vertex2]
     # point is a vertex, hence distance to vertex is 0
-    len1, len2 = (vector1[0] ** 2 + vector1[0] ** 2) ** 0.5, (vector2[0] ** 2 + vector2[0] ** 2) ** 0.5
+    len1, len2 = (vector1[0] ** 2 + vector1[0] ** 2) ** 0.5, (
+        vector2[0] ** 2 + vector2[0] ** 2
+    ) ** 0.5
     if len1 == 0 or len2 == 0:
         angle_sum = 2 * pi
         break
 
     # begin fucntion v_ang(vector1, vector2):
     vector1, vector2 = vec1, vec2
-    len1, len2 = (vector1[0] ** 2 + vector1[1] ** 2) ** 0.5, (vector2[0] ** 2 + vector2[1] ** 2) ** 0.5
+    len1, len2 = (vector1[0] ** 2 + vector1[1] ** 2) ** 0.5, (
+        vector2[0] ** 2 + vector2[1] ** 2
+    ) ** 0.5
     res = 0
     if len1 != 0 and len2 != 0:
         res = acos((vector1[0] * vector2[0] + vector1[1] * vector2[1]) / (len1 * len2))
@@ -176,10 +184,14 @@ for vertex in vertices:
 
         # begin fucntion v_ang(vector1, vector2):
         vector1, vector2 = side, vec
-        len1, len2 = (vector1[0] ** 2 + vector1[1] ** 2) ** 0.5, (vector2[0] ** 2 + vector2[1] ** 2) ** 0.5
+        len1, len2 = (vector1[0] ** 2 + vector1[1] ** 2) ** 0.5, (
+            vector2[0] ** 2 + vector2[1] ** 2
+        ) ** 0.5
         res = 0
         if len1 != 0 and len2 != 0:
-            res = acos((vector1[0] * vector2[0] + vector1[1] * vector2[1]) / (len1 * len2))
+            res = acos(
+                (vector1[0] * vector2[0] + vector1[1] * vector2[1]) / (len1 * len2)
+            )
         # end function
         angle_side_vec = res
 
