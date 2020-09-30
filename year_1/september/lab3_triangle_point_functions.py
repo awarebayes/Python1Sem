@@ -5,16 +5,32 @@
 #  Если находится, то найти расстояние от этой точки до ближайшей стороны
 #  Написал: Щербина МА ИУ7  15Б
 
-from math import pi, sin, acos
-from math import inf
-
+from math import pi, sin, acos, tan, inf, isclose
 
 def v_new(point1, point2):
-    return (point1[0] - point2[0], point1[1] - point2[1], (point1, point2))
+    return point1[0] - point2[0], point1[1] - point2[1], (point1, point2)
 
 
 def v_dot(vector1, vector2):
     return vector1[0] * vector2[0] + vector1[1] * vector2[1]
+
+
+def v_plus(vector1, vector2):
+    return vector1[0] + vector2[0], vector1[1] + vector2[1]
+
+
+def v_mult(vector, value):
+    return vector[0] * value, vector[1] * value
+
+
+# rotate vector clockwise 90 degrees
+def v_cw_rotation(vector):
+    return vector[1], -vector[0]
+
+
+# rotate vector counter clockwise 90 degrees
+def v_ccw_rotation(vector):
+    return -vector[1], vector[0]
 
 
 def v_len(vector):
@@ -65,6 +81,12 @@ sides_adjacent = {
     v3: (s2, s3),
 }  # sides adjacent to a vertex
 
+vertex_opposite_side = {
+    s3: v1,
+    s2: v2,
+    s1: v3,
+}
+
 # side lengths:
 for i, side in enumerate(sides):
     print("Side {} length: {:g}".format(i + 1, v_len(side)))
@@ -105,7 +127,6 @@ Find the vectors connecting the point to each of the triangle's three vertices
 and sum the angles between those vectors.
 If the sum of the angles is 2*pi then the point is inside the triangle.
 """
-
 print("Is point inside the triangle?")
 angle_sum = 0  # sum of angles in radians, see above
 px, py = map(float, input(">>> px, py (float, float): ").split())
@@ -136,6 +157,61 @@ for vertex in vertices:
         if side_dist < min_side_dist:
             min_side_dist = side_dist
             min_side = side
+
+
+min_move_dist = inf  # distance to minimize
+min_point_moved = None  # resulting point
+min_point_to_move = None  # point we will move
+
+# which vertex to move to make triangle equilateral
+
+
+for side in sides:
+    p1, p2 = side[2]  # points of side
+    middle = ((p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2)  # middle point of side
+    target_length = v_len(side) / 2 * tan(pi / 3)
+    assert isclose(target_length / sin(pi / 3), v_len(side))
+    shrink_term = target_length / (v_len(side))
+
+    # here are the points we get by making equilateral triangle from respective side
+    moved_1 = v_plus(middle, v_mult(v_cw_rotation(side), shrink_term))
+    moved_2 = v_plus(middle, v_mult(v_ccw_rotation(side), shrink_term))
+    # with operator overloading:
+    # moved_1 = middle + v_cw_rotation(side) * shrink_length
+    # moved_2 = middle + v_ccw_rotation(side) * shrink_length
+
+    # some assertion to test we are right
+    # our vector is perpendicular
+    assert v_dot(v_new(middle, moved_1), side) == 0
+    assert v_dot(v_new(middle, moved_2), side) == 0
+    # our resulting point lies on the equilateral triangle
+    assert isclose(v_len(v_new(p1, moved_1)), v_len(side)) and isclose(
+        v_len(v_new(moved_1, p2)), v_len(side)
+    )
+    assert isclose(v_len(v_new(p1, moved_2)), v_len(side)) and isclose(
+        v_len(v_new(moved_2, p2)), v_len(side)
+    )
+
+    point_to_move = vertex_opposite_side[side]  # the point we are moving
+    # distances from that  point
+    move_dist_p1 = v_len(v_new(point_to_move, moved_1))
+    move_dist_p2 = v_len(v_new(point_to_move, moved_2))
+
+    # some simple comparisons
+    if move_dist_p1 < min_move_dist:
+        min_move_dist = move_dist_p1
+        min_point_moved = moved_1
+        min_point_to_move = point_to_move
+    if move_dist_p2 < min_move_dist:
+        min_move_dist = move_dist_p2
+        min_point_moved = moved_2
+        min_point_to_move = point_to_move
+
+print("min_move_dist {:g}".format(min_move_dist))
+print("point to move", min_point_to_move)
+print("moved point")
+for coord, val in zip(["x", "y"], min_point_moved):
+    print("{} {:g}".format(coord, val))
 
 if (angle_sum - 2 * pi) < 10e-5:  # floating point bug
     print("Point is inside the triangle")
