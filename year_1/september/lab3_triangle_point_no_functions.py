@@ -114,7 +114,7 @@ res = (vector[0] ** 2 + vector[1] ** 2) ** 0.5
 from_length = res
 
 
-# begin fucntion v_ang(vector1, vector2):
+# begin function v_ang(vector1, vector2):
 vector1, vector2 = altitude_from[0], altitude_to
 len1, len2 = (vector1[0] ** 2 + vector1[1] ** 2) ** 0.5, (
     vector2[0] ** 2 + vector2[1] ** 2

@@ -158,27 +158,24 @@ for vertex in vertices:
             min_side_dist = side_dist
             min_side = side
 
-
 min_move_dist = inf  # distance to minimize
 min_point_moved = None  # resulting point
 min_point_to_move = None  # point we will move
 
 # which vertex to move to make triangle equilateral
 
-
 for side in sides:
     p1, p2 = side[2]  # points of side
     middle = ((p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2)  # middle point of side
     target_length = v_len(side) / 2 * tan(pi / 3)
-    assert isclose(target_length / sin(pi / 3), v_len(side))
     shrink_term = target_length / (v_len(side))
 
     # here are the points we get by making equilateral triangle from respective side
     moved_1 = v_plus(middle, v_mult(v_cw_rotation(side), shrink_term))
     moved_2 = v_plus(middle, v_mult(v_ccw_rotation(side), shrink_term))
     # with operator overloading:
-    # moved_1 = middle + v_cw_rotation(side) * shrink_length
-    # moved_2 = middle + v_ccw_rotation(side) * shrink_length
+    # moved_1 = middle + v_cw_rotation(side) * shrink_term
+    # moved_2 = middle + v_ccw_rotation(side) * shrink_term
 
     # some assertion to test we are right
     # our vector is perpendicular
