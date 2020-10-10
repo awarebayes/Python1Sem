@@ -7,6 +7,7 @@
 
 from math import pi, sin, acos, tan, inf, isclose
 
+
 def v_new(point1, point2):
     return point1[0] - point2[0], point1[1] - point2[1], (point1, point2)
 

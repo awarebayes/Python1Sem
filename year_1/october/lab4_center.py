@@ -45,6 +45,7 @@ for step in range(n_steps):
     min_f2 = min(f2, min_f2)
     max_f1 = max(f1, max_f1)
     max_f2 = max(f2, max_f2)
+
 print("-" * (3 * 15 + 4))
 
 print()
@@ -57,9 +58,9 @@ print()
 PLOT_W, _ = get_terminal_size()  # plot width
 PLOT_W -= 15  # adjust to fit better
 
-n_func = int(
-    input("which function do you want to plot [1,2]? \n >>> ")
-)  # which function to plot
+# n_func = int(
+#    input("which function do you want to plot [1,2]? \n >>> ")
+# )  # which function to plot
 y_ticks = int(
     input("how many ticks do you want on the y axis [4..8]? \n >>> ")
 )  # number of ticks on y axis
@@ -67,20 +68,16 @@ y_ticks -= 1
 y_should_tick1 = 0  # when number should be placed
 y_should_tick2 = 0  # when tick should be placed
 
-if n_func == 1:
-    f_min = min_f1
-    f_max = max_f1
-    f_range = max_f1 - min_f1
 
-else:
-    f_min = min_f2
-    f_max = max_f2
-    f_range = max_f2 - min_f2
+f_min = min(min_f1, min_f2)
+f_max = max(max_f1, max_f2)
+f_range = f_max - f_min
+
 
 # y axis - number labels
 print(" " * 6, end="")
 i = 0
-while i < PLOT_W + 1:  # +1 is to print the last number / tick
+while i < PLOT_W + 1:  # +1 is to print the last nu,ber / tick
     if i + 1 > y_should_tick1:
         y_should_tick1 += PLOT_W / y_ticks  # update tick
         y_val = f_min + f_range * (i / PLOT_W)  # value of y at i
@@ -95,7 +92,7 @@ print()
 
 # y axis - axis and ticks
 print(" " * 6, end="")
-for i in range(PLOT_W + 1):  # +1 is to print the last number / tick
+for i in range(PLOT_W + 1):  # +1 is to print the last nu,ber / tick
     if i + 1 > y_should_tick2:
         y_should_tick2 += PLOT_W / y_ticks  # update tick
         print("|", end="")  # tick
@@ -103,21 +100,43 @@ for i in range(PLOT_W + 1):  # +1 is to print the last number / tick
         print("-", end="")  # axis
 print("--->y")
 
+x_axis_zero = int((-f_min / (f_max - f_min)) * PLOT_W)  # where x axis should be
+x_axis_exists = f_min <= 0 <= f_max
 
 # x axis
 for step in range(n_steps):
     x = start + step * step_size
-    if n_func == 1:
-        y = x - 0.5 ** x
-    else:
-        y = x ** 3 - 4.49 * x ** 2 - 24.5 * x + 19.5
-    percent_y = (y - f_min) / f_range  # where y is in range, normalized between [0, 1]
-    pos_y = int(percent_y * PLOT_W)  # where y is in [0, PLOT_W]
-    x = x / 10 ** max_exp  # log scale x
-    if pos_y == 0:  # y is on the x axis
-        print("{:>6.2f}".format(x), "*", sep="")
-    else:
-        print("{:>6.2f}".format(x), "|", " " * (pos_y - 1), "*", sep="")
-print(" " * 6 + "|")
-print(" " * 6 + "v")
-print(" " * 6 + "x*10^", max_exp, sep="")
+
+    # function 1
+    y1 = x - 0.5 ** x
+    percent_y1 = (
+        y1 - f_min
+    ) / f_range  # where y1 is in range, normalized between [0, 1]
+    pos_y1 = int(percent_y1 * PLOT_W)  # where y2 is in [0, PLOT_W]
+
+    # function 2
+    y2 = x ** 3 - 4.49 * x ** 2 - 24.5 * x + 19.5
+    percent_y2 = (
+        y2 - f_min
+    ) / f_range  # where y2 is in range, normalized between [0, 1]
+    pos_y2 = int(percent_y2 * PLOT_W)  # where y2 is in [0, PLOT_W]
+
+    x = x / 10 ** max_exp  # make x into exponent
+    print("{:>6.2f}|".format(x), sep="", end="")  # right label
+
+    for i in range(PLOT_W + 1):
+        if i == pos_y1:
+            print("‣", end="")
+        elif i == pos_y2:
+            print("•", end="")
+        elif i == x_axis_zero and x_axis_exists:
+            print("|", end="")
+        else:
+            print(" ", end="")
+    print()
+
+if x_axis_exists:
+    x_label_pos = x_axis_zero + 7  # where x axis label should be
+    print(" " * x_label_pos + "|")
+    print(" " * x_label_pos + "v")
+    print(" " * x_label_pos + "x*10^", max_exp, sep="")
