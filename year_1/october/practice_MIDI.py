@@ -28,6 +28,7 @@ for program in programs:
     notes = defaultdict(list)
     fixed = []
     for line in program:
+        should_ignore = False
         time, state, chord = line.split()
         note = Note(int(time), True if state == "ON" else False, chord)
         print("Current", note)
@@ -45,12 +46,14 @@ for program in programs:
                 notes[chord].pop()
             # 10 ON -> 10 OFF
             elif last_note.time == note.time and not last_note.state and note.state:
-                # print('hit', notes[chord][-2])
-:
-                notes[chord][-1] = Note(last_note.time-1, False, chord)
-
-        notes[chord].append(note)
-        print()
+                if notes[chord][-2].time == last_note.time-1:
+                    notes[chord].pop(-1)
+                    should_ignore = True
+                else:
+                    notes[chord][-1] = Note(last_note.time-1, False, chord)
+        if not should_ignore:
+            notes[chord].append(note)
+        
 
     #print("Notes:")
     #print(notes)
