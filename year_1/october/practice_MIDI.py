@@ -33,14 +33,22 @@ for program in programs:
         print("Current", note)
         if notes[chord]:
             print("Last", notes[chord][-1])
-            last_state = notes[chord][-1].state
-            if last_state == note.state == True:
+            last_note = notes[chord][-1]
+            # 10 ON -> 10 ON
+            if last_note.state == note.state == True:
                 note_off = Note(note.time-1, False, note.chord)
                 print("Double on, adding correcting node", note_off)
                 notes[chord].append(note_off)
-            elif last_state == note.state == False:
+            # 10 OFF -> 10 OFF
+            elif last_note.state == note.state == False:
                 print("Double off, popping the last one")
                 notes[chord].pop()
+            # 10 ON -> 10 OFF
+            elif last_note.time == note.time and not last_note.state and note.state:
+                # print('hit', notes[chord][-2])
+:
+                notes[chord][-1] = Note(last_note.time-1, False, chord)
+
         notes[chord].append(note)
         print()
 
