@@ -45,13 +45,6 @@ rules = [
     # "a OFF, b OFF -> "
 ]
 
-rules_and_tests = [
-    ("a ON, a ON -> a ON", [(10, True), (10, True)], True),
-    ("a ON, a ON -> a ON", [(9, True), (10, True)], False),
-    ("a ON, a ON -> a ON", [(10, True), (11, True)], False),
-    ("a ON, a ON -> a ON", [(10, True), (11, True)], True),
-]
-
 # get time functions and states for named args:
 # time1: { time_function: \x -> x-1, True }, ...
 def parse_expr(expr_args):
@@ -90,22 +83,20 @@ def parse_func(expr):
         if len(args) < args_len:
             return False
         for arg, expr_arg in zip(args, expr_args):
-            time, state = arg
-            base_arg_time = args[arg_times[expr_arg.base_name]]
-            if expr_arg.time_func(base_arg_time) != time:
+            time, state = arg.time, arg.state
+            base_arg_time = args[arg_times[expr_arg.base_name]].time
+            if expr_arg.time_func(base_arg_time) != time or state != expr_arg.state:
                 return False
         return True
 
     def results(args):
         pass
 
-    return match
+    return match, None
 
 
 def main():
-    print(rules[1])
-    rule_matched = parse_func(rules[0])
-    print(rule_matched([(9, True), (10, True)]))
+    print(rules[0])
 
 
 if __name__ == "__main__":
