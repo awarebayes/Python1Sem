@@ -46,10 +46,10 @@ for program in programs:
     notes = defaultdict(list)
     fixed = []
     for line in program:
-        should_ignore = False 
-        time, state, chord = line.split() 
+        should_ignore = False
+        time, state, chord = line.split()
         note = Note(int(time), True if state == "ON" else False, chord)
-        if notes[chord]: # whether there are notes in stack
+        if notes[chord]:  # whether there are notes in stack
             last_note = notes[chord][-1]
             # 10 ON -> 10 ON, add one trailing off
             if last_note.state == note.state == True:
