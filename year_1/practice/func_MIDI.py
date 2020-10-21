@@ -1,5 +1,5 @@
 from collections import namedtuple, defaultdict
-import heapq
+from sortedcollections import SortedDict
 
 ExprArg = namedtuple("ExprArg", ["base_name", "state", "time_offset"])
 UnnamedNote = namedtuple("UnnamedNote", ["time", "state"])
@@ -34,25 +34,11 @@ rules_str = [
     "a ON, b ON -> a ON, b-1 ON, b ON",
     # 1 time, on off at the same time
     "a OFF, a ON -> a-1 OFF, a ON",
-    "a ON, a OFF -> a-1 OFF, a ON"
+    "a ON, a OFF -> a-1 OFF, a ON",
     # identity functions
-    # "a ON, b ON -> a ON, b ON"
-    # "a OFF, b OFF -> "
+    "a ON, b OFF -> a ON, b OFF",
+    "a OFF, b ON -> a ON, b OFF",
 ]
-
-def unique_heap_push(heap, elem):
-    elem = (elem.time, elem.state) 
-    if elem in heap:
-        return heap
-    else:
-        heapq.heappush(heap, elem)
-        return heap
-
-def unique_heap_update(heap, elems):
-    for elem in elems:
-        heap = unique_heap_push(heap, elem)
-    return heap
-
 
 # get time functions and states for named args:
 # time1: { time_function: \x -> x-1, True }, ...
@@ -110,8 +96,8 @@ rules = list(map(parse_func, rules_str))
 max_arg_len = max(map(lambda x: x[2], rules))
 
 # do guard pattern matching, like in haskell
-# if matched then evaluate and return
-# otherwise False
+# | matched = evaluate and return
+# | otherwise = False
 def match_evaluate(args):
     for match_f, results_f, args_len in rules:
         if match_f(args[:args_len]):
@@ -119,27 +105,32 @@ def match_evaluate(args):
     return False
 
 def fix_program(program):
-    notes_trees = defaultdict(list)
-    notes_trees_idx = defaultdict(dict)
+    notes_trees = defaultdict(SortedDict)
     notes_unfixed = defaultdict(list) 
+
+    # parse by line
     for line in program:
         time, state, note = line.split()
         time, state, note = int(time), True if state == "ON" else False, int(note)
         notes_unfixed[note].append(UnnamedNote(time, state))
+    
+    # fix
     for note in notes_unfixed.keys():
         for i in range(len(notes_unfixed[note])):
             notes_slice = notes_unfixed[note][i:i+max_arg_len]
             notes_evaluated = match_evaluate(notes_slice)
             if not notes_evaluated:
-                unique_heap_push( notes_trees[note], notes_unfixed[note][i])
+                current_note = notes_unfixed[note][i]
+                notes_trees[note][current_note.time] = current_note.state
             else:
-                unique_heap_update( notes_trees[note], notes_evaluated)
+                for e in notes_evaluated:
+                    notes_trees[note][e.time] = e.state
         print(note, notes_trees[note])
     print()
 
 
 def main():
-    p = list(map(fix_program, programs))
+    list(map(fix_program, programs))
 
 
 if __name__ == "__main__":
