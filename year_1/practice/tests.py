@@ -6,6 +6,7 @@ from func_MIDI import parse_func, UnnamedNote
 # | | | | | | (_| | || (__| | | |
 # |_| |_| |_|\__,_|\__\___|_| |_|
 
+
 match_tests = [
     ("a ON, a ON -> a ON", [(10, True), (10, True)], True),
     ("a ON, a ON -> a ON", [(9, True), (10, True)], False),
@@ -22,7 +23,7 @@ match_tests = [
 
 print("Running match tests...")
 for func, args, target_res in match_tests:
-    match_f, _ = parse_func(func)
+    match_f, _, _ = parse_func(func)
     args_turple = [UnnamedNote(arg[0], arg[1]) for arg in args]
     match_res = match_f(args_turple)
     if match_res != target_res:
@@ -56,7 +57,7 @@ match_tests = [
 ]
 print("Running results tests...")
 for func, args, target_res in match_tests:
-    _, results_f = parse_func(func)
+    _, results_f, _ = parse_func(func)
     args_turple = [UnnamedNote(arg[0], arg[1]) for arg in args]
     res_turple = [UnnamedNote(res[0], res[1]) for res in target_res]
     results = results_f(args_turple)
