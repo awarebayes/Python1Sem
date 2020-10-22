@@ -1,4 +1,3 @@
-
 from collections import namedtuple
 
 ExprArg = namedtuple("ExprArg", ["base_name", "state", "time_offset"])
@@ -26,7 +25,8 @@ def parse_expr(expr_args):
         target_args.append(ExprArg(base_name, state, time_offset))
     return target_args, base_times
 
-# parse a function (rule), get functions for matching and evaluation 
+
+# parse a function (rule), get functions for matching and evaluation
 def parse_func(expr):
     expr_args, expr_res = expr.split("->")
     expr_args, expr_res = expr_args.split(","), expr_res.split(",")
@@ -55,15 +55,19 @@ def parse_func(expr):
 
     return match, results, args_len
 
+
 # also returns max_arg_len
-def read_rules(rules_path="./rules.txt"):
+def read_rules(rules_path="./rules"):
     f = open(rules_path, "r")
     rules = []
     for line in f:
-        if "#" in line: # comment
+        line = line.strip()
+        if not line or line[0] == "#":  # comment / blank line
             continue
-        else: # actual rule
-            rules.append(line)
+        if "#" in line:
+            line = line.split("#")[0]
+        rules.append(line)
+
     f.close()
     rules = list(map(parse_func, rules))
     max_arg_len = max(map(lambda x: x[2], rules))
