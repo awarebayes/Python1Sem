@@ -1,6 +1,6 @@
 from lambdamatch import read_rules
 from collections import namedtuple, defaultdict
-from sortedcontainers import SortedDict
+from sortedcontainers import SortedDict, SortedList
 
 UnnamedNote = namedtuple("UnnamedNote", ["time", "state"])
 
@@ -47,18 +47,21 @@ def fix_program(program):
     
     # apply fix, O(N*log N)
     for note in notes_unfixed.keys():
-        for i in range(len(notes_unfixed[note])):
+        i = 0
+        while i < len(notes_unfixed[note]):
             notes_slice = notes_unfixed[note][i:i+max_arg_len]
             notes_evaluated = match_evaluate(notes_slice)
             if not notes_evaluated: # everything is ok for this note
                 current_note = notes_unfixed[note][i]
+
                 notes_fixed[note][current_note.time] = current_note.state
             else: # pattern was matched, multiple notes were returned
+                notes_unfixed[note] = notes_unfixed[note][:i] + notes_evaluated + notes_unfixed[note][i+2:]
                 for n in notes_evaluated:
                     notes_fixed[note][n.time] = n.state 
+            i += 1
         
     # now order by time, O(N * log N)
-    fixed = [] # out program
     fixed_by_time = SortedDict() # dict: { time: (note, state) }
     for note in notes_fixed.keys():
         for time, state in notes_fixed[note].items():
@@ -66,6 +69,7 @@ def fix_program(program):
                 fixed_by_time[time] = []
             fixed_by_time[time].append((note, state))
 
+    fixed = [] # out program
     # assemble back again, O(N)
     for time, notes in fixed_by_time.items():
         for note in notes:

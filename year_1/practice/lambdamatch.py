@@ -28,8 +28,8 @@ def parse_expr(expr_args):
 
 # parse a function (rule), get functions for matching and evaluation 
 def parse_func(expr):
-    expr_args, expr_res = expr.split("=")
-    expr_args, expr_res = expr_args.split(":"), expr_res.split(":")
+    expr_args, expr_res = expr.split("->")
+    expr_args, expr_res = expr_args.split(","), expr_res.split(",")
     expr_args, arg_times = parse_expr(expr_args)
     expr_res, _ = parse_expr(expr_res)
     args_len = len(expr_args)
@@ -60,12 +60,10 @@ def read_rules(rules_path="./rules.txt"):
     f = open(rules_path, "r")
     rules = []
     for line in f:
-        if "rules" in line: # reset rules
-            rules = []
-        elif "--" in line: # comment
+        if "#" in line: # comment
             continue
         else: # actual rule
-            rules.append(line.split("|")[1])
+            rules.append(line)
     f.close()
     rules = list(map(parse_func, rules))
     max_arg_len = max(map(lambda x: x[2], rules))
