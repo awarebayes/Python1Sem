@@ -4,22 +4,25 @@
 # move it to the end of matrix
 from utils import fool_proof_float_input
 
+# pretty print matrix
 def pprint_mat(m):
     for i in m:
         print(" ".join(map(lambda x: f"{x:^12g}", i)))
 
+
 def main():
-    h = int(input(">>> n rows (int): " )) # height
-    w = int(input(">>> n cols (int): " )) # width
+    h = int(input(">>> n rows (int): "))  # height
+    w = int(input(">>> n cols (int): "))  # width
 
-    m = [[0 for i in range(w)] for j in range(h)] # matrix
+    m = [[0 for i in range(w)] for j in range(h)]  # matrix
 
-    """
+    # input
     for row in range(h):
         for col in range(w):
             m[row][col] = fool_proof_float_input(f"M[{row}, {col}] = ")
+
     """
-    
+    use for testing:
     from random import uniform
     for row in range(h):
         for col in range(w):
@@ -28,16 +31,16 @@ def main():
                 m[row][col] = uniform(0,1)
             else:
                 m[row][col] = 0
+    """
 
     print("\nBefore:")
     pprint_mat(m)
 
-    n_zeros_col = [0 for i in range(w)] # number of zeros in column
+    n_zeros_col = [0 for i in range(w)]  # number of zeros in column
     for col in range(w):
         for row in range(h):
             if m[row][col] == 0:
-                n_zeros_col[col] += 1 # element in col is a zero
-
+                n_zeros_col[col] += 1  # element in col is a zero
 
     # check whether any zeros:
     has_zero = False
