@@ -70,8 +70,8 @@ def fool_proof_float_input(greeting):
         print("Something is wrong with your float, pal!")
 
 
-def br(lens, margin, char="─", pos="top"):
-    start, end, col_sep = char, char, "│"
+def br(lens, margin, pos="top"):
+    start, end, col_sep = "─", "─", "│"
     if pos == "top":
         start, end, col_sep = "┌", "┐", "┬"
     elif pos == "middle":
@@ -80,7 +80,7 @@ def br(lens, margin, char="─", pos="top"):
         start, end, col_sep = "└", "┘", "┴"
 
     print(start, end="")
-    print(col_sep.join([char * (l + margin) for l in lens]), end="")
+    print(col_sep.join(["─" * (l + margin) for l in lens]), end="")
     print(end)
 
 
@@ -103,6 +103,6 @@ def pprint_table(*cols, margin=2):
             print(" " * margin + col + (max_col_len - len(col)) * " ", end="│", sep="")
         print()
         if first_col:
-            br(max_col_lens, margin, "─", pos="middle")
+            br(max_col_lens, margin, pos="middle")
             first_col = False
     br(max_col_lens, margin, pos="bottom")

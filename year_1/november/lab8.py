@@ -23,12 +23,12 @@ from math import sin, ceil
 from utils import pprint_table
 
 # if need fool proof input:
-# from utils import fool_proof_float_input, fool_proof_int_input
+from utils import fool_proof_float_input, fool_proof_int_input
 
 
 # function for you to mess with
 def f(x):
-    return x ** 2 + sin(x)
+    return x + 5
 
 
 # implemenation of left triangle rule
@@ -47,7 +47,7 @@ def integrate_weddle(f, start, finish, n_part):
     if n_part % 6 != 0:
         n_part = ceil(n_part / 6) * 6
     step = (finish - start) / n_part  # step size
-    first_start = start  # where we started furst
+    first_start = start  # where we started first
     integral = 0  # end integral
     for i in range(int(n_part / 6)):
         start = first_start + i * step * 6
@@ -80,7 +80,7 @@ def search_parts_prescision(integral, prescision):
 
 
 def main():
-    start = 1
+    start = 0
     end = 10
 
     # it is called "encapsulation"
@@ -89,24 +89,36 @@ def main():
 
     # input
     # can replace int(input(...)) with fool_proof_int_input(...)
-    left_parts = int(input(">>> number of partitions for left rectangle: "))
-    weddle_parts = int(input(">>> number of partitions for weddle: "))
+    parts_1 = fool_proof_int_input(">>> 1st number of partitions: ")
+    parts_2 = fool_proof_int_input(">>> 2nd number of partitions: ")
+
+    if parts_1 <= 0 or parts_2 <= 0:
+        print("Must be positive!")
+        exit(1)
 
     # integration results
-    res_left = left_rectangles(left_parts)
-    res_weddle = weddle(weddle_parts)
+    res_1_left = left_rectangles(parts_1)
+    res_2_left = left_rectangles(parts_2)
+    res_1_weddle = weddle(parts_1)
+    res_2_weddle = weddle(parts_2)
 
     # table formatting, can you not read the function name?
+    print()
     pprint_table(
-        ["Method", "Left Rectangles", "Weddle"],
-        ["N Partitions", left_parts, weddle_parts],
-        ["Result", res_left, res_weddle],
+        [
+            "Method",
+            "Left Rectangles",
+            "Weddle",
+        ],
+        [f"N Partitions: {parts_1}", res_1_left, res_1_weddle],
+        [f"N Partitions: {parts_2}", res_2_left, res_2_weddle],
         margin=2,
     )
+    print()
 
     print("Left rectangles required is less prescise")
     # can replace float(input(...)) with fool_proof_float_input(...)
-    prec = float(input(">>> prescision for left rectangles: "))
+    prec = fool_proof_float_input(">>> prescision for left rectangles: ")
 
     left_target_parts, end_res = search_parts_prescision(left_rectangles, prec)
 
