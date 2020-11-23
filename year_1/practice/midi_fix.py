@@ -1,8 +1,15 @@
+from typing import Dict, List, Tuple
 from lambdamatch import read_rules
 from collections import namedtuple, defaultdict
 from sortedcontainers import SortedDict, SortedList
 
+# structs
 UnnamedNote = namedtuple("UnnamedNote", ["time", "state"])
+
+# types
+note_str = str
+note_time = int
+note_state = bool
 
 # time function is a lambda which maps time relatively to coeficient
 programs = [
@@ -12,8 +19,8 @@ programs = [
         "5 ON 70",
         "10 ON 60",
         "10 OFF 60",
-        "15 OFF 70",
-        "15 ON 70",
+        "14 OFF 80",
+        "14 ON 80",
         "15 OFF 70",
         "15 ON 70",
         "20 OFF 60",
@@ -29,24 +36,27 @@ rules, max_arg_len = read_rules("/home/mike/Documents/uni/year_1/practice/rules"
 # | matched = evaluate and return
 # | otherwise = False
 # complexity: O(n * max_arg_len)
-def match_evaluate(args):
+def match_evaluate(args: List[UnnamedNote]):
     for match_f, results_f, args_len in rules:
         if match_f(args[:args_len]):
             return results_f(args)
     return False
 
 
-def fix_program(program):
-    notes_unfixed = defaultdict(list)  # { note: UnnamedNote (time, state) }
-    notes_fixed = defaultdict(SortedDict)  # { note: SortedDict {time: state} }
-
-    # parse by line, O(N)
+# parse by line, O(N)
+def parse_by_line(program):
+    notes_unfixed: Dict[note_str, List[UnnamedNote]] = defaultdict(list)
     for line in program:
         time, state, note = line.split()
         time, state, note = int(time), True if state == "ON" else False, int(note)
         notes_unfixed[note].append(UnnamedNote(time, state))
+    return notes_unfixed
 
-    # apply fix, O(N*log N)
+# apply fix, O(N*log N)
+def apply_fix(notes_unfixed):
+    notes_fixed: Dict[note_str, SortedDict[note_time, note_state]] = defaultdict(
+        SortedDict
+    )
     for note in notes_unfixed.keys():
         i = 0
         while i < len(notes_unfixed[note]):
@@ -64,9 +74,20 @@ def fix_program(program):
                 for n in notes_evaluated:
                     notes_fixed[note][n.time] = n.state
             i += 1
+    return notes_fixed
+
+def rewrite_note(note_dict):
+    pass
+
+def fix_program(program):
+    notes_unfixed = parse_by_line(program)
+    notes_fixed = apply_fix(notes_unfixed)
 
     # now order by time, O(N * log N)
-    fixed_by_time = SortedDict()  # dict: { time: (note, state) }
+    fixed_by_time: SortedDict[
+        note_time, List[Tuple[note_str, note_state]]
+    ] = SortedDict()  # dict: { time: (note, state) }
+
     for note in notes_fixed.keys():
         for time, state in notes_fixed[note].items():
             if time not in fixed_by_time:

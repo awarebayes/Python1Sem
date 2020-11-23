@@ -1,17 +1,22 @@
 from collections import namedtuple
+from typing import Callable, List, Tuple, Dict, NewType
 
+# structs go here
 ExprArg = namedtuple("ExprArg", ["base_name", "state", "time_offset"])
 UnnamedNote = namedtuple("UnnamedNote", ["time", "state"])
 
+# types go here
+time_name = str  # name of time
+time_index = int  # where time occurs
 
 # get time functions and states for named args:
 # time1: { time_function: \x -> x-1, True }, ...
-def parse_expr(expr_args):
-    target_args = []
-    base_times = {}  # where names like a appear
+def parse_expr(expr_args: List[str]) -> Tuple[List[ExprArg], Dict[str, int]]:
+    target_args: List[ExprArg] = []
+    base_times: Dict[time_name, time_index] = {}  # where names like a appear
     for idx, arg in enumerate(expr_args):
-        name, state = arg.strip().split(" ")
-        state = True if state == "ON" else False
+        name, state_str = arg.strip().split(" ")
+        state = True if state_str == "ON" else False
         if "+" in name:
             base_name, const_add = name.split("+")  # name: a+1, base_name: a
             time_offset = int(const_add)
@@ -27,15 +32,15 @@ def parse_expr(expr_args):
 
 
 # parse a function (rule), get functions for matching and evaluation
-def parse_func(expr):
+def parse_func(expr) -> Tuple[Callable, Callable, int]:
     expr_args, expr_res = expr.split("->")
     expr_args, expr_res = expr_args.split(","), expr_res.split(",")
     expr_args, arg_times = parse_expr(expr_args)
     expr_res, _ = parse_expr(expr_res)
     args_len = len(expr_args)
 
-    # matched args and parsed: time1: 10, time2: 11, ...
-    def match(args):
+    # check if matches
+    def match(args: List[UnnamedNote]) -> bool:
         if len(args) != args_len:
             return False
         for arg, expr_arg in zip(args, expr_args):
@@ -45,7 +50,8 @@ def parse_func(expr):
                 return False
         return True
 
-    def results(args):
+
+    def results(args: List[UnnamedNote]) -> List[UnnamedNote]:
         out = []
         for res in expr_res:
             base_res_time = args[arg_times[res.base_name]].time
