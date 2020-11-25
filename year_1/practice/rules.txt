@@ -4,14 +4,15 @@ a-1 ON, a ON -> a-1 OFF, a ON
 a OFF, a OFF -> a OFF  # 1 time, off
 a OFF, b OFF -> b OFF  # 2 times, off (a-1 doesnt matter)
 
-# a *, b * -> 
-
 a ON, b ON -> a ON, b-1 ON, b ON  # 2 times, on
 
 # 1 time, on off at the same time
 a OFF, a ON -> a-1 OFF, a ON
 a ON, a OFF -> a-1 OFF, a ON
 
+
+0 OFF, 1 ON -> 0 ON # nasty start thing
+
 # identity functions
 a ON, b OFF -> a ON, b OFF
-a OFF, b ON -> a ON, b OFF
+a OFF, b ON -> a OFF, b ON
