@@ -1,2 +1,3 @@
-from .midi_fix import main
+from midi_fix import main
+
 main()

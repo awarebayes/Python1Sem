@@ -8,11 +8,14 @@
 # 6. Выход
 # написал Щербина МА иу7-15
 
+
 def gen_alphabet():
     return "".join([chr(i) for i in range(32, 127)])
 
+
 def shift_string(string, n):
     return (string + string[:n])[n:]
+
 
 def main():
     alphabet = gen_alphabet()
@@ -50,28 +53,36 @@ def main():
                 print("Set a key and the string to encrypt!")
                 continue
             for idx in range(len(to_encrypt)):
+                # row = alphabet.index(to_encrypt[idx])
                 row = ord(to_encrypt[idx]) - zero_offset
                 col = ord(key[idx % len(key)]) - zero_offset
                 encrypted += shift_string(alphabet, row)[col]
             print("encrypted: ")
             print(encrypted)
         elif option == 4:  # decrypt
-            if encrypted == "": # check if something is encrypted
+            if encrypted == "":  # check if something is encrypted
                 print("Nothing is encrypted yet!")
                 continue
             decrypted = ""
             for idx in range(len(encrypted)):
                 # note: because the matrix is symmetrical, row/column do not matter
                 key_char = key[idx % len(key)]
-                col_idx = alphabet.index(key_char)
-                row_idx = shift_string(alphabet, col_idx).index(encrypted[idx])
-                decrypted += alphabet[row_idx]
+                col = alphabet.index(key_char)
+                row = shift_string(alphabet, col).index(encrypted[idx])
+                decrypted += alphabet[row]
             print("decrypted:")
             print(decrypted)
 
         elif option == 5:
             print("tabula")
-            print("\n".join([" ".join(list(shift_string(alphabet, row))) for row in range(len(alphabet))]))
+            print(
+                "\n".join(
+                    [
+                        " ".join(list(shift_string(alphabet, row)))
+                        for row in range(len(alphabet))
+                    ]
+                )
+            )
         elif option == 6:
             break
 

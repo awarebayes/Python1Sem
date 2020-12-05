@@ -3,6 +3,9 @@ from lambdamatch import read_rules
 from collections import namedtuple, defaultdict
 from sortedcontainers import SortedDict, SortedList
 
+
+rules, max_arg_len = read_rules("/home/mike/Documents/uni/year_1/practice/rules.txt")
+
 # structs
 UnnamedNote = namedtuple("UnnamedNote", ["time", "state"])
 
@@ -12,18 +15,16 @@ note_time = int
 note_state = bool
 note_id = int
 
-# set [match_f, results_f] for each rule in rules_str
-rules, max_arg_len = read_rules("/home/mike/Documents/uni/year_1/practice/rules.txt")
 
 # do guard pattern matching, like in haskell
 # | matched = evaluate and return
-# | otherwise = False
+# | otherwise = None, 0
 # complexity: O(n * max_arg_len)
 def match_evaluate(args: List[UnnamedNote]) -> Tuple[Optional[List[UnnamedNote]], int]:
     for match_f, results_f, args_len in rules:
-        matched, n_args = match_f(args[:args_len])
+        matched = match_f(args[:args_len])
         if matched:
-            return results_f(args), n_args
+            return results_f(args), args_len
     return None, 0
 
 
@@ -52,7 +53,7 @@ def fix_note(note_unfixed):
     return note_unfixed
 
 
-# rewrite perpetually, until not fixed
+# rewrite note perpetually, until not fixed
 def rewrite_note(note_unfixed):
     last_rewrite = fix_note(note_unfixed)
     while note_unfixed != last_rewrite:
@@ -61,7 +62,7 @@ def rewrite_note(note_unfixed):
     return last_rewrite
 
 
-# rewrite all notes then order them by time, O(N*log N)
+# rewrite all notes, O(N*log N)
 def rewrite(notes_unfixed):
     notes_fixed: Dict[note_str, Dict[note_time, note_state]] = {}
     for note in notes_unfixed.keys():
@@ -76,8 +77,8 @@ def rewrite(notes_unfixed):
     return notes_fixed
 
 
+# now order by time, O(N * log N)
 def order_by_time(notes_fixed):
-    # now order by time, O(N * log N)
     fixed_by_time: Dict[
         note_time, List[Tuple[note_str, note_state]]
     ] = SortedDict()  # dict: { time: (note, state) }
@@ -90,14 +91,9 @@ def order_by_time(notes_fixed):
     return fixed_by_time
 
 
-def rewrite_program(program):
-    notes_unfixed = parse_by_line(program)
-    notes_fixed = rewrite(notes_unfixed)
-    fixed_by_time = order_by_time(notes_fixed)
-    del notes_fixed, notes_unfixed
-
+# assemble back again, O(N)
+def serialize_program(fixed_by_time):
     fixed = []  # out program
-    # assemble back again, O(N)
     for time, notes in fixed_by_time.items():
         for note in notes:
             # make serialized copy
@@ -106,10 +102,16 @@ def rewrite_program(program):
     return fixed
 
 
-def main():
-    programs = [
-        [],
-    ]
+def rewrite_program(program):
+    notes_unfixed = parse_by_line(program)
+    notes_fixed = rewrite(notes_unfixed)
+    fixed_by_time = order_by_time(notes_fixed)
+    serialized = serialize_program(fixed_by_time)
+    return serialized
+
+# testing function
+def read_program_from_file():
+    programs = [[], ]
     for line in open("/home/mike/Documents/uni/year_1/practice/programs.txt", "r"):
         line = line.strip()
         if line == "-1":
@@ -118,6 +120,23 @@ def main():
             break
         else:
             programs[-1].append(line)
+    return programs
+
+def main():
+    programs = [
+        [],
+    ]
+
+    while True:
+        line = input().strip()
+        if line == "-1":
+            programs.append([])
+        elif line == "-2":
+            break
+        else:
+            programs[-1].append(line)
+    
+
 
     for program in programs:
         fixed = rewrite_program(program)

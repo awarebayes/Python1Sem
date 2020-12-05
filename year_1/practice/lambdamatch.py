@@ -1,11 +1,16 @@
 from collections import namedtuple
-from typing import Callable, List, Tuple, Dict, Union
+from typing import Any, Callable, List, Tuple, Dict, Type, Union
 
 # structs go here
 ExprArg = namedtuple("ExprArg", ["base_name", "state", "time_offset"])
 ConstArg = namedtuple("ConstArg", ["time", "state"])
 TemplateArg = Union[ExprArg, ConstArg]
 UnnamedNote = namedtuple("UnnamedNote", ["time", "state"])
+Rule = Tuple[
+    Callable[[List[UnnamedNote]], bool],  # match
+    Callable[[List[UnnamedNote]], List[UnnamedNote]],  # result
+    int,  # arg size
+]
 
 # types go here
 time_name = str  # name of time
@@ -13,7 +18,7 @@ time_index = int  # where time occurs
 
 # expression args is of form: b-1 ON, a+1 OFF
 # when expression arg does not have time offset, its called "basic arg"
-def parse_expr_arg(name: str, state_str: str) -> ExprArg:
+def parse_expr_arg(name: str, state_str) -> ExprArg:
     state = True if state_str == "ON" else False
     if "+" in name:
         basic_name, const_add = name.split("+")  # name: a+1, basic_name: a
@@ -27,7 +32,7 @@ def parse_expr_arg(name: str, state_str: str) -> ExprArg:
     return ExprArg(basic_name, state, time_offset)
 
 
-def parse_const_arg(name: str, state_str: str) -> ConstArg:
+def parse_const_arg(name: str, state_str) -> ConstArg:
     state = True if state_str == "ON" else False
     return ConstArg(int(name), state)
 
@@ -50,7 +55,7 @@ def parse_expr(expr_args: List[str]) -> Tuple[List[TemplateArg], Dict[str, int]]
 
 
 # parse a function (rule), get functions for matching and evaluation
-def parse_rule(rule_str) -> Tuple[Callable, Callable, int]:
+def parse_rule(rule_str) -> Rule:
     args, res = rule_str.split("->")
     args, res = args.split(","), res.split(",")
     args, basic_times = parse_expr(args)
@@ -58,24 +63,20 @@ def parse_rule(rule_str) -> Tuple[Callable, Callable, int]:
     args_len = len(args)
 
     # check if matches
-    def match(notes: List[UnnamedNote]) -> Tuple[bool, int]:
+    def match(notes: List[UnnamedNote]) -> bool:
         if len(notes) != args_len:
-            return False, 0
+            return False
         for note, arg in zip(notes, args):
             time, state = note.time, note.state
             if isinstance(arg, ExprArg):
                 base_arg_time = notes[basic_times[arg.base_name]].time
-                if (
-                    base_arg_time + arg.time_offset != time
-                    or state != arg.state
-                ):
-                    return False, 0
+                if base_arg_time + arg.time_offset != time or state != arg.state:
+                    return False
             elif isinstance(arg, ConstArg):
                 if arg.time != time or arg.state != state:
-                    return False, 0
-        return True, len(notes)
+                    return False
+        return True
 
-    # evaluate
     def results(notes: List[UnnamedNote]) -> List[UnnamedNote]:
         out = []
         for r in res:
@@ -91,7 +92,7 @@ def parse_rule(rule_str) -> Tuple[Callable, Callable, int]:
 
 
 # also returns max_arg_len
-def read_rules(rules_path="./rules"):
+def read_rules(rules_path="./rules") -> Tuple[List[Rule], int]:
     f = open(rules_path, "r")
     rules = []
     for line in f:
