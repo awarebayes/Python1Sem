@@ -3,8 +3,8 @@ from lambdamatch import read_rules
 from collections import namedtuple, defaultdict
 from sortedcontainers import SortedDict, SortedList
 
-
-rules, max_arg_len = read_rules("/home/mike/Documents/uni/year_1/practice/rules.txt")
+RULES_PATH = "./scherbina_practice/rules.txt"
+rules, max_arg_len = read_rules(RULES_PATH)
 
 # structs
 UnnamedNote = namedtuple("UnnamedNote", ["time", "state"])
@@ -112,7 +112,7 @@ def rewrite_program(program):
 # testing function
 def read_program_from_file():
     programs = [[], ]
-    for line in open("/home/mike/Documents/uni/year_1/practice/programs.txt", "r"):
+    for line in open("./programs.txt", "r"):
         line = line.strip()
         if line == "-1":
             programs.append([])
@@ -136,8 +136,10 @@ def main():
         else:
             programs[-1].append(line)
     
-
-
+    # uncomment for testing:
+    # programs = read_program_from_file()
+    
+    print("Fixed: ")
     for program in programs:
         fixed = rewrite_program(program)
         for line in fixed:
