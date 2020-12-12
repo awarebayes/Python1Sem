@@ -53,6 +53,7 @@ def split_by(arr, delim):
             continue
     return out
 
+
 # make tree from array of string symbols
 def make_tree(tree_arr, op_code=0):
     # print("make tree was called", tree_arr, "opcode", priority[op_code])
@@ -80,6 +81,7 @@ def make_tree(tree_arr, op_code=0):
         out = Tree(out, make_tree(tree_arr[i]), operator)
     return out
 
+
 # find closing paranthesis starting from idx
 def find_closing_par(tree_arr, start_idx):
     opened_parr = 0
@@ -92,7 +94,8 @@ def find_closing_par(tree_arr, start_idx):
             return i
     return None
 
-# split expression by parentheses 
+
+# split expression by parentheses
 def use_parentheses(tree_arr):
     if "(" not in tree_arr or ")" not in tree_arr:
         return tree_arr
@@ -111,6 +114,7 @@ def use_parentheses(tree_arr):
         + use_parentheses(right)
     )
 
+
 # parse string to array of str symbols
 def parse_string(inp):
     out = []
@@ -118,15 +122,16 @@ def parse_string(inp):
         if i.isdigit():
             if out and out[-1].isdigit():
                 out[-1] = out[-1] + i
-            else: # appand new expr_arr
+            else:  # appand new expr_arr
                 out.append(i)
         elif i in "+-/*%^√()":
-            if i == "/" and out[-1] == "/": # replace /, / -> //
+            if i == "/" and out[-1] == "/":  # replace /, / -> //
                 out.pop()
                 out.append("//")
             else:
                 out.append(i)
     return out
+
 
 # evaluate string
 def eval_string(expr_str):
@@ -139,6 +144,7 @@ def eval_string(expr_str):
     if result.is_integer():
         return int(result)
     return result
+
 
 # testing
 def main():

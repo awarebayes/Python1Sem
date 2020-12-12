@@ -109,9 +109,12 @@ def rewrite_program(program):
     serialized = serialize_program(fixed_by_time)
     return serialized
 
+
 # testing function
 def read_program_from_file():
-    programs = [[], ]
+    programs = [
+        [],
+    ]
     for line in open("./programs.txt", "r"):
         line = line.strip()
         if line == "-1":
@@ -121,6 +124,7 @@ def read_program_from_file():
         else:
             programs[-1].append(line)
     return programs
+
 
 def main():
     programs = [
@@ -135,10 +139,10 @@ def main():
             break
         else:
             programs[-1].append(line)
-    
+
     # uncomment for testing:
     # programs = read_program_from_file()
-    
+
     print("Fixed: ")
     for program in programs:
         fixed = rewrite_program(program)

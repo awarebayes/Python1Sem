@@ -4,22 +4,16 @@ from tkinter.ttk import *
 
 root = Tk()
 root.configure(background="white")
+root.title("TKinter")
 
-w = Label(root, text="Enter your name and click toggle!")
-w.pack(side=LEFT)
 
-btn_end = Button(root, text="Exit")
-btn_end.pack(side=RIGHT)
-btn_end.bind('<Button-1>', exit)
+def showtext(event):
+    box.showinfo(text.get(1.0, END))
 
-name_text = Entry(root)
-name_text.pack(side=LEFT)
 
-def toggle():
-    w.configure(text=f"Hello {name_text.get()}")
-
-btn_toggle = Button(root, text="toggle", command=toggle)
-btn_toggle.pack(side=LEFT)
+text = Text(width=25, height=5, wrap=WORD)
+text.pack(side=LEFT)
+text.bind("<Return>", showtext)
 
 
 root.mainloop()

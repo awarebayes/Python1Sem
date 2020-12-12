@@ -25,8 +25,9 @@ text = [
 ]
 """
 
-text = ["i", ]
-
+text = [
+    "i",
+]
 
 
 # align right
@@ -37,6 +38,7 @@ def print_align_right():
         print(" " * spaces_to_add, end="")
         print(sentence)
 
+
 # align left
 def print_align_left():
     max_len = max(map(len, text))
@@ -44,6 +46,7 @@ def print_align_left():
         spaces_to_add = max_len - len(sentence)
         print(sentence, end="")
         print(" " * spaces_to_add)
+
 
 # align with
 def print_align_width():
@@ -71,17 +74,23 @@ def print_align_width():
                 remaining_space_len -= 1
         print()
 
+
 # delete word
 def delete_word(to_replace):
     for idx, sentence in enumerate(text):
-        text[idx] = " ".join([word for word in sentence.split(" ") if word != to_replace])
+        text[idx] = " ".join(
+            [word for word in sentence.split(" ") if word != to_replace]
+        )
 
 
 # replace word
 def replace_word(to_replace, replace_with):
     for idx, sentence in enumerate(text):
         text[idx] = " ".join(
-            [word if word != to_replace else replace_with for word in sentence.split(" ")]
+            [
+                word if word != to_replace else replace_with
+                for word in sentence.split(" ")
+            ]
         )
 
 
@@ -89,11 +98,11 @@ def replace_word(to_replace, replace_with):
 def scan_for_expressions(string):
     expr = [""]
     for i in string:
-        if i.isdigit() or i in "+-/*%^√()": # math symbol
+        if i.isdigit() or i in "+-/*%^√()":  # math symbol
             expr[-1] += i
-        elif i == " " and expr[-1] != "": # space
+        elif i == " " and expr[-1] != "":  # space
             expr[-1] += i
-        else: # no need for multiple ""
+        else:  # no need for multiple ""
             if expr[-1] != "":
                 expr.append("")
 
@@ -102,7 +111,7 @@ def scan_for_expressions(string):
     return expr
 
 
-# evaluate all expressions in string 
+# evaluate all expressions in string
 def eval_all_in_string(string):
     expressions = scan_for_expressions(string)
     for expr_str in expressions:
@@ -116,17 +125,23 @@ def eval_all_in_string(string):
         string = string.replace(expr_str, evaluated + " ")
     return string
 
+
 # evaluate the entire text
 def eval_text():
     for idx, sentence in enumerate(text):
         text[idx] = eval_all_in_string(sentence)
+
 
 # find word with max frequency
 def find_max_freq():
     for idx, sentence in enumerate(text):
         counted = Counter(sentence.split())
         most_common = counted.most_common(1)[0]
-        print(f"Sentence: {idx+1}, most common word:", most_common[0], f"({most_common[1]})")
+        print(
+            f"Sentence: {idx+1}, most common word:",
+            most_common[0],
+            f"({most_common[1]})",
+        )
 
 
 def main():

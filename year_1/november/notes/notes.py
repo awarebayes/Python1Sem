@@ -2,6 +2,7 @@ from collections import defaultdict
 import random
 from math import ceil
 
+
 def pprint_mat(m):
     for row in m:
         print(" ".join([f"{i:^3}" for i in row]))
@@ -44,6 +45,7 @@ def cat_vertical(mat1, mat2):
             out[row + h2][col] = mat2[row][col]
     return out
 
+
 def get_quadriple_matrix(size):
     mat = [[i + j * size + 1 for i in range(size)] for j in range(size)]
 
@@ -53,8 +55,9 @@ def get_quadriple_matrix(size):
 
     top = cat_horizontal(mat, r1)
     bottom = cat_horizontal(r3, r2)
-    mat = cat_vertical(top, bottom)  
+    mat = cat_vertical(top, bottom)
     return mat
+
 
 # upper left: [row, col]
 # upper right: [col][n-row-1]
@@ -63,60 +66,61 @@ def get_quadriple_matrix(size):
 def zero_unique_once(mat):
     h = len(mat)
     w = len(mat[0])
-    for row in range(h//2):
-        for col in range(w//2):
+    for row in range(h // 2):
+        for col in range(w // 2):
             choice = random.randint(0, 3)
             # upper left
             if choice == 0:
                 mat[row][col] = 0
             # upper right
             elif choice == 1:
-                mat[col][h-row-1] = 0
+                mat[col][h - row - 1] = 0
             # lower left
             elif choice == 2:
-                mat[h-row-1][w-col-1] = 0
+                mat[h - row - 1][w - col - 1] = 0
             # lower right
             elif choice == 3:
-                mat[col][h-row-1] = 0 
+                mat[col][h - row - 1] = 0
     return mat
 
 
 def gen_string_mat(size, from_mat, replacements):
-    mat = [[''] * size * 2 for _ in range(2*size)]
+    mat = [[""] * size * 2 for _ in range(2 * size)]
     idx = 0
-    for row in range(size*2):
-        for col in range(size*2):
+    for row in range(size * 2):
+        for col in range(size * 2):
             if from_mat[row][col] == 0:
-                if idx == len(replacements) - 1:                        
+                if idx == len(replacements) - 1:
                     return
                 mat[row][col] = replacements[idx]
                 idx += 1
     return mat
 
+
 def mat_to_string(mat):
     h = len(mat)
     w = len(mat[0])
     out = ""
-    for row in range(h//2):
-        for col in range(w//2):
+    for row in range(h // 2):
+        for col in range(w // 2):
             choice = random.randint(0, 3)
             # upper left
             if mat[row][col] != "":
                 out += mat[row][col]
             # upper right
-            elif mat[col][h-row-1] != "":
-                out += mat[col][h-row-1]
+            elif mat[col][h - row - 1] != "":
+                out += mat[col][h - row - 1]
             # lower left
-            elif mat[h-row-1][w-col-1] != "":
-                out += mat[h-row-1][w-col-1]
+            elif mat[h - row - 1][w - col - 1] != "":
+                out += mat[h - row - 1][w - col - 1]
             # lower right
-            elif mat[col][h-row-1] != "":
-                out +=  mat[col][h-row-1]
+            elif mat[col][h - row - 1] != "":
+                out += mat[col][h - row - 1]
     return out
- 
+
 
 input_str = "abcde"
-size = ceil((len(input_str)/4)**0.5)
+size = ceil((len(input_str) / 4) ** 0.5)
 
 mat = get_quadriple_matrix(size)
 mat = zero_unique_once(mat)
