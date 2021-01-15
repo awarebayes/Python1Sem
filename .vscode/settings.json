@@ -1,4 +1,5 @@
 {
     "cSpell.enabled": true,
-    "cSpell.language": "en,en-US,ru-RU,ru"
+    "cSpell.language": "en,en-US,ru-RU,ru",
+    "python.formatting.provider": "black"
 }
